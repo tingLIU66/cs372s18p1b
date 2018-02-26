@@ -6,14 +6,14 @@ import scala.collection.mutable.{ ArrayBuffer, Queue }
  */
 trait InputProcess extends Task with Output {
 
-  def scanLeftUsingIterate(input: Iterator[Int], winsize: Array[Int])= {
+  def scanLeftUsingIterate(input: Iterator[Int], winsize: IndexedSeq[Int]) = {
 
     var currentnum = 0
     var count = 0
     var min = 0.0
     var max = 0.0
     var avg = 0.0
-   // val result = Iterator.empty
+    val result = Iterator(Option(1.0, 2.0, 3.0))
     val sizes = new ArrayBuffer[Int]
 
     // def scanLeftUsingIterate(input: Iterator[Int], winsize: Array[Int]) = {
@@ -25,8 +25,9 @@ trait InputProcess extends Task with Output {
 
       val innumbers = Iterator.iterate(1) {
         _ * number
-      } drop (1)
+      } take (10) drop (1)
 
+      currentnum = number
       count += 1
 
       if (count > sizes.max) {
@@ -35,7 +36,7 @@ trait InputProcess extends Task with Output {
 
       /** calculate min, avg, max for each input windowsize */
 
-      for (size <- sizes) {
+      /*for (size <- sizes) {
         val result = Iterator.iterate(Option(0.0, 0.0, 0.0)) {
           case Some((_, _, _)) =>
             if (count >= size) {
@@ -45,11 +46,11 @@ trait InputProcess extends Task with Output {
               max = nums.max
               avg = nums.sum / size
               Option((min, avg, max))
-            }
-            else None
-        }
-        doOutput (currentnum, count, result)
-      }
+            } else None
+        }*/
+      innumbers.foreach(println)
+      //doOutput(currentnum, count, result)
+      //}
     }
   }
 }

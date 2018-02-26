@@ -1,19 +1,19 @@
 import scala.collection.mutable.Queue
 
 /** Defines a dependency (plug-in contract) on a run method that processes an input stream. */
-trait Output{
-  def doOutput(current: Int, count: Int, stats:Iterator[Option[(Double, Double,Double)]])
+trait Output {
+  def doOutput(current: Int, count: Int, stats: Iterator[Option[(Double, Double, Double)]])
 
 }
 
 /** Provides a reusable output observer tied to println/stdout. */
-trait OutputToStdOut extends Output{
+trait OutputToStdOut extends Output {
 
-  override def doOutput(current: Int, count: Int, stats: Iterator[Option[(Double, Double,Double)]]) {
+  override def doOutput(current: Int, count: Int, stats: Iterator[Option[(Double, Double, Double)]]) {
     print(current + " " + count + " ")
     for (stat <- stats) {
       if (stat == None)
-        print("?" + " ")
+        print("? ? ?")
       else
         print(stat.get + " ")
     }
@@ -22,9 +22,8 @@ trait OutputToStdOut extends Output{
   }
 }
 
-
 trait Task {
-  def scanLeftUsingIterate(input: Iterator[Int], winsize: Array[Int]): Unit
+  def scanLeftUsingIterate(input: Iterator[Int], winsize: IndexedSeq[Int]): Unit
 }
 
 /**
@@ -36,7 +35,8 @@ trait Main extends Task with OutputToStdOut {
     val lines = scala.io.Source.stdin.getLines
     val words = lines.flatMap(_.split("\\W+"))
     val numbers = words.map(_.toInt)
-     scanLeftUsingIterate(numbers, args.map(_.toInt))
+    //scanLeftUsingIterate(numbers, args.map(_.toInt))
+    scanLeftUsingIterate(numbers, args.map(_.toInt))
     //result.foreach(println)
   }
 }
