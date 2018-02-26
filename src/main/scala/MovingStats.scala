@@ -1,60 +1,29 @@
-import scala.collection.mutable.{ ArrayBuffer, Queue }
 
-/**
- * Provides a main method for reading lines and printing line count along with line itself.
- * Depends on a suitable Output provider.
- */
-trait InputProcess extends Task with Output {
 
-  def scanLeftUsingIterate(input: Iterator[Int], winsize: IndexedSeq[Int]) = {
+/** Reads lines and prints cumulative length of all lines so far along with most recent line itself. */
+object CumulativeLengthFunctionalModular extends Main{
 
-    var currentnum = 0
-    var count = 0
-    var min = 0.0
-    var max = 0.0
-    var avg = 0.0
-    val result = Iterator(Option(1.0, 2.0, 3.0))
-    val sizes = new ArrayBuffer[Int]
+  // def iterate[T](start: T)(f: (T) ⇒ T): Iterator[T]
+  // def scanLeft[B](z: B)(op: (B, A) ⇒ B): Iterator[B]
+  // https://github.com/scala/scala/blob/v2.12.4/src/library/scala/collection/Iterator.scala#L595
 
-    // def scanLeftUsingIterate(input: Iterator[Int], winsize: Array[Int]) = {
-    for (size <- winsize) {
-      sizes += size
-    }
+  /**
+    * Simple implementation of `scanLeft` using `iterate` and `takeWhile`.
+    * For `takeWhile` to work, this requires lifting the resulting iterator to `Option`.
+    * Alternatively, one could use `null`, but that would be less stylish.
+    */
+  def scanLeftUsingIterate(it: Iterator[Int])(z: (Int,Int))(op: (Int,Int)=>(Int,Int)): Iterator[(Int,Int)] =
+    Iterator.iterate(Option(z)) {
+      case Some(r) =>
+        if (it.hasNext) Option(op(r, it.next())) else None
+    } takeWhile (_.isDefined) map (_.get)
 
-    for (number <- input) {
+  def accumulateCount(acc: Int, line: Int) = (acc, line)
 
-      val innumbers = Iterator.iterate(1) {
-        _ * number
-      } take (10) drop (1)
+  def run(lines: Iterator[Int]): Iterator[(Int, Int)] =
+    scanLeftUsingIterate(lines)("dummy", 0)(accumulateCount).drop(1)
 
-      currentnum = number
-      count += 1
+  //scanLeftUsingIterate(lines)("dummy", 0)(accumulateCount).drop()
 
-      if (count > sizes.max) {
-        innumbers.drop(1)
-      }
 
-      /** calculate min, avg, max for each input windowsize */
-
-      /*for (size <- sizes) {
-        val result = Iterator.iterate(Option(0.0, 0.0, 0.0)) {
-          case Some((_, _, _)) =>
-            if (count >= size) {
-              /** if the number of the input is more than windowsize, drop the first n numbers in the queue */
-              val nums = innumbers.drop(count - size).toList
-              min = nums.min
-              max = nums.max
-              avg = nums.sum / size
-              Option((min, avg, max))
-            } else None
-        }*/
-      innumbers.foreach(println)
-      //doOutput(currentnum, count, result)
-      //}
-    }
-  }
 }
-
-/** A concrete main application object. */
-object MovingStats extends Main with InputProcess
-
